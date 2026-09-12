@@ -1,5 +1,8 @@
 ---
 collections:
-  - community.general
-  - ansible.posix
-  - ansible.utils
+  - name: community.general
+    version: ">=8.2.0"
+  - name: ansible.posix
+    version: ">=1.5.4"
+  - name: ansible.utils
+    version: ">=2.5.0"

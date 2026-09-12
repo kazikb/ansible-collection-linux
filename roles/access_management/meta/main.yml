@@ -3,7 +3,7 @@ galaxy_info:
   author: Kazimierz Biskup
   description: Manages local users, groups, SSH access, sudo rules, and the root account.
   license: MIT
-  min_ansible_version: "2.21"
+  min_ansible_version: "2.18"
 
   platforms:
     - name: EL
