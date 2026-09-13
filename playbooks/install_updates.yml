@@ -4,13 +4,13 @@
 #
 # Requirements:
 # - Red Hat systems require dnf-plugins-core for reboot detection.
-#   The system_baseline role installs this package.
+#   The kazikb.linux.system_baseline role installs this package.
 #
 # Preview targeted hosts:
-# ansible-playbook playbooks/install-updates.yml -i <inventory> --limit <host> --list-hosts
+# ansible-playbook kazikb.linux.install_updates -i <inventory> --limit <host> --list-hosts
 #
 # Install updates:
-# ansible-playbook playbooks/install-updates.yml -i <inventory> --limit <host>
+# ansible-playbook kazikb.linux.install_updates -i <inventory> --limit <host>
 #
 - name: Install system updates
   hosts: all

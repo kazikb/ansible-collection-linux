@@ -25,13 +25,9 @@ each managed user. All tasks are tagged with `access_management`.
 Requirements
 ------------
 
-- Ansible Core 2.21 or newer.
-- The `ansible.posix` collection:
-
-```bash
-ansible-galaxy collection install -r requirements.yml
-```
-
+- Ansible Core 2.18.12 or newer.
+- Managing Ubuntu 26.04 with its default Python 3.14 requires Ansible Core 2.20 or newer.
+- The `ansible.posix` collection, installed automatically with `kazikb.linux`.
 - Fact gathering must be enabled for the play.
 - The target must use systemd.
 - OpenSSH server must be installed when SSH access management is enabled.
@@ -253,8 +249,8 @@ Dependencies
 ------------
 
 This role has no Ansible role dependencies. It uses the
-`ansible.posix.authorized_key` module from the `ansible.posix` collection listed
-in `requirements.yml`.
+`ansible.posix.authorized_key` module from the `ansible.posix` collection installed
+with `kazikb.linux`.
 
 Example Playbook
 ----------------
@@ -308,7 +304,7 @@ Example Playbook
     access_management_root_account_password_lock: true
 
   roles:
-    - role: access_management
+    - role: kazikb.linux.access_management
 ```
 
 Run only this role's tagged tasks with:
@@ -325,4 +321,4 @@ MIT
 Author Information
 ------------------
 
-Kazimierz Biskup [GitHub](https://github.com/kazikb/ansible)
+Kazimierz Biskup [GitHub](https://github.com/kazikb/ansible-collection-linux)

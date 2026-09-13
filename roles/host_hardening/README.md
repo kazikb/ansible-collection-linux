@@ -20,13 +20,10 @@ unchanged. All tasks are tagged with `host_hardening`.
 Requirements
 ------------
 
-- Ansible Core 2.21 or newer.
-- The `community.general`, `ansible.posix` and `ansible.utils` collections:
-
-```bash
-ansible-galaxy collection install -r requirements.yml
-```
-
+- Ansible Core 2.18.12 or newer.
+- Managing Ubuntu 26.04 with its default Python 3.14 requires Ansible Core 2.20 or newer.
+- The `community.general`, `ansible.posix` and `ansible.utils` collections,
+  installed automatically with `kazikb.linux`.
 - Python `netaddr` 0.10.1 or newer on the Ansible controller.
 - Fact gathering must be enabled for the play.
 - The target must use systemd.
@@ -235,7 +232,7 @@ Dependencies
 ------------
 
 This role has no Ansible role dependencies. It uses the `community.general`,
-`ansible.posix` and `ansible.utils` collections listed in `requirements.yml`.
+`ansible.posix` and `ansible.utils` collections installed with `kazikb.linux`.
 
 Example Playbook
 ----------------
@@ -272,7 +269,7 @@ Example Playbook
         state: disabled
 
   roles:
-    - role: host_hardening
+    - role: kazikb.linux.host_hardening
 ```
 
 The SSH rule must cover the target's actual listening SSH port before enabling
@@ -292,4 +289,4 @@ MIT
 Author Information
 ------------------
 
-Kazimierz Biskup [GitHub](https://github.com/kazikb/ansible)
+Kazimierz Biskup [GitHub](https://github.com/kazikb/ansible-collection-linux)
