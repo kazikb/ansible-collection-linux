@@ -1,0 +1,72 @@
+---
+# Installs sudo on Debian, Ubuntu, and Red Hat systems.
+# Adds the Ansible connection user to the sudo or wheel group.
+# Intended for initial configuration of hosts without sudo.
+#
+# Requirements:
+# - Python 3 must be installed at /usr/bin/python3 on the target host.
+# - The connection user must be a non-root account with su access to root.
+# - The default sudo policy must grant access to the sudo or wheel group.
+# - Use -k for the SSH password and -K for the root password used by su.
+#   Omit -k when using SSH key authentication.
+#
+# Preview targeted hosts:
+# ansible-playbook kazikb.linux.bootstrap_install_sudo -i <inventory> -u <user> -k -K --limit <host> --list-hosts
+#
+# Install sudo and configure access:
+# ansible-playbook kazikb.linux.bootstrap_install_sudo -i <inventory> -u <user> -k -K --limit <host>
+#
+- name: Bootstrap sudo access
+  hosts: all
+  become: true
+  become_method: ansible.builtin.su
+  gather_facts: true
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: Validate Ansible connection user
+      ansible.builtin.assert:
+        that:
+          - ansible_user | default("") | length > 0
+          - ansible_user | default("") != "root"
+        quiet: true
+        fail_msg: >-
+          Specify a non-root Ansible connection user. This playbook adds that
+          user to the sudo or wheel group.
+
+    - name: Configure sudo access on Debian and Ubuntu
+      when: ansible_facts['os_family'] == 'Debian'
+      block:
+        - name: Install sudo on Debian and Ubuntu
+          ansible.builtin.apt:
+            name: sudo
+            state: present
+            update_cache: true
+            cache_valid_time: 3600 # 1 hour
+
+        - name: Set sudo group name on Debian and Ubuntu
+          ansible.builtin.set_fact:
+            install_sudo_group_name: sudo
+
+    - name: Configure sudo access on Red Hat systems
+      when: ansible_facts['os_family'] == 'RedHat'
+      block:
+        - name: Install sudo on Red Hat systems
+          ansible.builtin.dnf:
+            name: sudo
+            state: present
+            update_cache: true
+
+        - name: Set sudo group name on Red Hat systems
+          ansible.builtin.set_fact:
+            install_sudo_group_name: wheel
+
+    - name: Add Ansible connection user to the sudo or wheel group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        state: present
+        append: true
+        groups: "{{ install_sudo_group_name }}"
+      when: install_sudo_group_name is defined
