@@ -20,7 +20,8 @@ The daemon configuration is authoritative. All tasks are tagged with
 Requirements
 ------------
 
-- Ansible Core 2.21 or newer.
+- Ansible Core 2.18.12 or newer.
+- Managing Ubuntu 26.04 with its default Python 3.14 requires Ansible Core 2.20 or newer.
 - Fact gathering must be enabled for the play.
 - The target must use systemd.
 - The play must use privilege escalation or otherwise run with root privileges.
@@ -96,7 +97,7 @@ Example Playbook
         size: 24
 
   roles:
-    - role: docker_engine
+    - role: kazikb.linux.docker_engine
 ```
 
 Run only this role's tagged tasks with:
@@ -113,4 +114,4 @@ MIT
 Author Information
 ------------------
 
-Kazimierz Biskup [GitHub](https://github.com/kazikb/ansible)
+Kazimierz Biskup [GitHub](https://github.com/kazikb/ansible-collection-linux)

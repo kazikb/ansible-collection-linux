@@ -1,0 +1,55 @@
+---
+namespace: kazikb
+name: linux
+version: 0.1.0
+
+readme: README.md
+
+authors:
+  - Kazimierz Biskup
+
+description: Configures Linux system baselines, access management, host hardening, and Docker Engine.
+
+license_file: LICENSE
+
+tags:
+  - linux
+  - infrastructure
+  - security
+  - automation
+
+repository: https://github.com/kazikb/ansible-collection-linux
+issues: https://github.com/kazikb/ansible-collection-linux/issues
+
+dependencies:
+  community.general: ">=8.2.0"
+  ansible.posix: ">=1.5.4"
+  ansible.utils: ">=2.5.0"
+
+build_ignore:
+  - .github
+  - .vscode
+  - .gitignore
+  - .devcontainer
+  - .agents
+  - .codex
+  - .venv
+  - .cache
+  - .ansible
+  - .ansible-lint*
+  - .yamllint*
+  - .pytest_cache
+  - collections
+  - local
+  - tests/inventory
+  - dist
+  - '*.tar.gz'
+  - '*.env'
+  - '*.key'
+  - '*.pem'
+  - '*.p12'
+  - '*.pfx'
+  - AGENTS.md
+  - ansible.cfg
+  - requirements-dev.txt
+  - requirements.yml

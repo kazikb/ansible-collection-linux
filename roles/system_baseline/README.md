@@ -27,13 +27,9 @@ below. All tasks are tagged with `system_baseline`.
 Requirements
 ------------
 
-- Ansible Core 2.21 or newer.
-- The `community.general` collection:
-
-```bash
-ansible-galaxy collection install -r requirements.yml
-```
-
+- Ansible Core 2.18.12 or newer.
+- Managing Ubuntu 26.04 with its default Python 3.14 requires Ansible Core 2.20 or newer.
+- The `community.general` collection, installed automatically with `kazikb.linux`.
 - Fact gathering must be enabled for the play.
 - The target must use systemd.
 - Chrony or systemd-timesyncd must already be installed on the target.
@@ -211,7 +207,7 @@ Dependencies
 ------------
 
 This role has no Ansible role dependencies. It uses modules from the
-`community.general` collection listed in `requirements.yml`.
+`community.general` collection installed with `kazikb.linux`.
 
 Example Playbook
 ----------------
@@ -242,7 +238,7 @@ Example Playbook
     system_baseline_automatic_updates_upgrade_type: security
 
   roles:
-    - role: system_baseline
+    - role: kazikb.linux.system_baseline
 ```
 
 Run only this role's tagged tasks with:
@@ -259,4 +255,4 @@ MIT
 Author Information
 ------------------
 
-Kazimierz Biskup [GitHub](https://github.com/kazikb/ansible)
+Kazimierz Biskup [GitHub](https://github.com/kazikb/ansible-collection-linux)

@@ -1,4 +1,6 @@
 local/
 collections/
-inventories/
+inventory/
 .venv/
+dist/
+kazikb-linux-*.tar.gz

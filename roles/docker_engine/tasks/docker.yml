@@ -16,6 +16,14 @@
       register: docker_engine_dpkg_architecture
       changed_when: false
 
+    # Dependency ansible.builtin.deb822_repository
+    - name: Install python3-debian
+      ansible.builtin.apt:
+        name: python3-debian
+        state: present
+        update_cache: true
+        cache_valid_time: "{{ docker_engine_apt_cache_valid_time }}"
+
     - name: Add Docker Engine repository on Debian and Ubuntu
       ansible.builtin.deb822_repository:
         name: docker
@@ -26,7 +34,6 @@
         architectures: "{{ docker_engine_dpkg_architecture.stdout }}"
         signed_by: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}/gpg"
         enabled: true
-        install_python_debian: true
       register: docker_engine_apt_repository_state
 
     - name: Force update APT cache after adding Docker Engine repository

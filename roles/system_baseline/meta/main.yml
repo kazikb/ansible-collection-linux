@@ -3,7 +3,7 @@ galaxy_info:
   author: Kazimierz Biskup
   description: Configures a common system baseline for Debian, Ubuntu, and Enterprise Linux systems.
   license: MIT
-  min_ansible_version: "2.21"
+  min_ansible_version: "2.18"
 
   platforms:
     - name: EL

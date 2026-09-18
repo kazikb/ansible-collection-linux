@@ -6,10 +6,10 @@
 # This playbook changes system configuration and may restart services or hosts.
 #
 # Preview one host:
-# ansible-playbook playbooks/dev/integration-test.yml -i <inventory> --check --diff --limit <host>
+# ansible-playbook tests/integration-test.yml -i <inventory> --check --diff --limit <host>
 #
 # Apply the base role composition:
-# ansible-playbook playbooks/dev/integration-test.yml -i <inventory> --limit <host>
+# ansible-playbook tests/integration-test.yml -i <inventory> --limit <host>
 #
 - name: Apply base roles for integration testing
   hosts: all

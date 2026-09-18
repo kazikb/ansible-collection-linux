@@ -3,7 +3,7 @@ galaxy_info:
   author: Kazimierz Biskup
   description: Installs and configures Docker Engine.
   license: MIT
-  min_ansible_version: "2.21"
+  min_ansible_version: "2.18"
 
   platforms:
     - name: EL
