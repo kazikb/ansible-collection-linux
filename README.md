@@ -134,5 +134,6 @@ Repeat after source changes; the installed copy does not update automatically.
 Releases
 --------
 
-Update the version in [`galaxy.yml`](galaxy.yml), then commit the changes
-and push a matching Git tag such as `v0.1.0`.
+Update the version in [`galaxy.yml`](galaxy.yml) and record the release in
+[`CHANGELOG.md`](CHANGELOG.md), then commit the changes and push a matching Git
+tag such as `v0.1.0`.
