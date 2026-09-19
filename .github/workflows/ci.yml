@@ -5,9 +5,23 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - "**/README.md"
+      - "**/AGENTS.md"
+      - CHANGELOG.md
+      - LICENSE
+      - .gitignore
+      - requirements.txt
   push:
     branches:
       - main
+    paths-ignore:
+      - "**/README.md"
+      - "**/AGENTS.md"
+      - CHANGELOG.md
+      - LICENSE
+      - .gitignore
+      - requirements.txt
 
 permissions:
   contents: read

@@ -53,3 +53,4 @@ build_ignore:
   - ansible.cfg
   - requirements-dev.txt
   - requirements.yml
+  - release-notes.md
