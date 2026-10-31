@@ -17,10 +17,30 @@
     name: "{{ host_hardening_sshd_service_name }}"
     state: reloaded
 
-- name: Reload nftables service
+# Ubuntu socket-activated SSH:
+# regenerate socket configuration and restart the listener.
+- name: Restart SSH socket after SSH configuration changes
   ansible.builtin.systemd_service:
-    name: nftables.service
-    state: reloaded
+    name: ssh.socket
+    daemon_reload: true
+    state: restarted
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - host_hardening_sshd_socket_active | default(false) | bool
+  listen: Reload SSH service
+
+- name: Withdraw previous role-owned SSH SELinux port
+  when:
+    - ansible_facts['os_family'] == 'RedHat'
+    - host_hardening_sshd_previous_port | length > 0
+    - host_hardening_sshd_previous_port != (host_hardening_sshd_port | default('', true) | string)
+  community.general.seport:
+    ports: "{{ host_hardening_sshd_previous_port }}"
+    proto: tcp
+    setype: ssh_port_t
+    state: absent
+    local: true
+    ignore_selinux_state: true
 
 - name: Reload ufw service
   when: host_hardening_firewall_enabled | bool

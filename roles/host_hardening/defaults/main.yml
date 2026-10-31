@@ -3,6 +3,9 @@
 
 # Manage the SSH daemon hardening [true | false]
 host_hardening_sshd_manage: false
+# SSH listening port from 1 through 65535.
+# null removes the role-managed Port directive and owned SELinux mapping.
+host_hardening_sshd_port: null
 # Root login policy
 # prohibit-password: root public-key access is supported.
 # forced-commands-only: only for specialized root keys containing a command="..." restriction in authorized_keys.

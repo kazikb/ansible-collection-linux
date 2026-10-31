@@ -16,6 +16,7 @@ system_baseline_distribution_package_list:
   - vim-enhanced
   - iproute
   - netcat
+  - policycoreutils-python-utils
 
 # Root CA
 system_baseline_ca_certificates_path: /etc/pki/ca-trust/source/anchors

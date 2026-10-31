@@ -1,4 +1,16 @@
 ---
+- name: Validate SSH listening port
+  ansible.builtin.assert:
+    that:
+      - (host_hardening_sshd_port | string) is match('^[1-9][0-9]{0,4}\Z')
+      - host_hardening_sshd_port | int <= 65535
+    quiet: true
+    fail_msg: >-
+      host_hardening_sshd_port must be a port from 1 through 65535 or null.
+  when:
+    - host_hardening_sshd_manage | bool
+    - host_hardening_sshd_port is not none
+
 - name: Validate firewall section
   when: host_hardening_firewall_manage | bool
   block:
@@ -39,10 +51,10 @@
       ansible.builtin.assert:
         that:
           - item.name | trim | length > 0
-          - item.name is match('^[A-Za-z0-9][A-Za-z0-9_-]*$')
+          - item.name is match('^[A-Za-z0-9][A-Za-z0-9_-]*\Z')
           - >-
             (item.destination_port | string)
-            is match('^[1-9][0-9]{0,4}(?:-[1-9][0-9]{0,4})?$')
+            is match('^[1-9][0-9]{0,4}(?:-[1-9][0-9]{0,4})?\Z')
           - item.destination_port_start >= 1
           - item.destination_port_end <= 65535
           - item.destination_port_start <= item.destination_port_end
@@ -116,7 +128,18 @@
             quiet: true
             fail_msg: >-
               The firewall ingress rules does not permit SSH port {{ item }}.
-          loop: "{{ host_hardening_sshd_listen_ports }}"
+          loop: >-
+            {{
+              (
+                host_hardening_sshd_listen_ports
+                + (
+                    [host_hardening_sshd_port | int]
+                    if (host_hardening_sshd_manage | bool)
+                        and host_hardening_sshd_port is not none
+                    else []
+                  )
+              ) | unique | list
+            }}
           loop_control:
             label: "SSH port: {{ item }}"
 
@@ -144,7 +167,7 @@
   ansible.builtin.assert:
     that:
       - item.name | trim | length > 0
-      - item.name is match('^[A-Za-z0-9][A-Za-z0-9_-]*$')
+      - item.name is match('^[A-Za-z0-9][A-Za-z0-9_-]*\Z')
       - >-
         item.state != 'configured'
         or (item.options | default('') | trim | length > 0)

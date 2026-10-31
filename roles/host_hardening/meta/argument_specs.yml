@@ -12,6 +12,13 @@ argument_specs:
         type: bool
         default: false
 
+      host_hardening_sshd_port:
+        description:
+          - Sets the SSH listening port from 1 through 65535.
+          - Null removes the role-managed Port directive.
+        type: int
+        default: null
+
       host_hardening_sshd_permit_root_login:
         description: Sets the SSH root login policy.
         type: str

@@ -41,6 +41,9 @@ Role Variables
 
 - `host_hardening_sshd_manage` - manage the SSH hardening configuration.
   Default: `false`.
+- `host_hardening_sshd_port` - SSH listening port from `1` through `65535`,
+  supplied as an integer or quoted digits. `null` removes the role-managed
+  `Port` directive. Default: `null`.
 - `host_hardening_sshd_permit_root_login` - root login policy:
   `forced-commands-only`, `no` or `prohibit-password`. Default: `no`.
 - `host_hardening_sshd_max_auth_tries` - maximum authentication attempts per
@@ -63,6 +66,7 @@ Role Variables
 
 ```yaml
 host_hardening_sshd_manage: true
+host_hardening_sshd_port: 2222
 host_hardening_sshd_permit_root_login: "no"
 host_hardening_sshd_max_auth_tries: 3
 host_hardening_sshd_login_grace_time: 1m
@@ -139,9 +143,13 @@ Rule names and source, protocol and port combinations must be unique across the
 primary and append lists.
 
 When firewall management is enabled, the role validates all rule definitions.
-When the firewall is also enabled, the role discovers listening `sshd` ports
-and requires each port to be covered by a `present` TCP rule. This check does
-not verify that the rule source permits the Ansible controller.
+When the firewall is also enabled, every listening SSH port and any
+role-managed SSH port must be covered by a `present` TCP rule. Rule sources
+are not checked against the Ansible controller address.
+
+For `host_hardening_sshd_port: null`, fallback ports are not validated.
+Permit both current and fallback ports during migration. Remove old rules
+after confirming SSH no longer listens on those ports.
 
 The firewall backend depends on the target:
 
@@ -280,6 +288,48 @@ Run only this role's tagged tasks with:
 ```bash
 ansible-playbook site.yml --tags host_hardening
 ```
+
+### SSH port migration
+
+Inventory must specify the current `ansible_port`. Permit both ports in the
+firewall and trust the host key for the new connection port.
+
+```yaml
+---
+- name: Change SSH port
+  hosts: servers
+  become: true
+  gather_facts: true
+
+  vars:
+    ssh_connection_port_after_migration: 2222
+
+  roles:
+    - role: kazikb.linux.host_hardening
+      host_hardening_sshd_manage: true
+      host_hardening_sshd_port: 2222
+      host_hardening_firewall_manage: false
+      host_hardening_sysctl_manage: false
+      host_hardening_kernel_modules_manage: false
+
+  post_tasks:
+    - name: Close previous SSH connection
+      ansible.builtin.meta: reset_connection
+
+    - name: Select new SSH connection port
+      ansible.builtin.set_fact:
+        ansible_port: "{{ ssh_connection_port_after_migration | int }}"
+      when: not ansible_check_mode
+
+    - name: Verify SSH connection
+      ansible.builtin.wait_for_connection:
+        timeout: 60
+```
+
+SSH handlers run before `post_tasks`. Set the destination connection port
+explicitly for port forwarding or `null` transitions. After verification, update
+inventory and remove unused firewall rules. Extra variables such as
+`-e ansible_port=22` override `set_fact`.
 
 License
 -------
