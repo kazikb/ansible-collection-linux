@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0
+
+- Add optional SSH port management to `host_hardening`.
+- Add SELinux tools to the Enterprise Linux package baseline in `system_baseline`.
+
 ## 0.1.0
 
 - Package `system_baseline`, `access_management`, `host_hardening`, and `docker_engine` as the `kazikb.linux` collection, preserving role variables, tags, and behavior.
