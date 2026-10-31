@@ -1,4 +1,70 @@
 ---
+- name: Prepare SELinux for ssh port change on RedHat
+  when:
+    - ansible_facts['os_family'] == 'RedHat'
+  block:
+    - name: Inspect previous SSH hardening file
+      ansible.builtin.stat:
+        path: "{{ host_hardening_sshd_config_file }}"
+      register: host_hardening_sshd_previous_file
+
+    - name: Read previous SSH hardening file
+      ansible.builtin.slurp:
+        src: "{{ host_hardening_sshd_config_file }}"
+      register: host_hardening_sshd_previous_content
+      when: host_hardening_sshd_previous_file.stat.exists
+
+    - name: Set previous role-managed SSH and SELinux ports
+      ansible.builtin.set_fact:
+        host_hardening_sshd_previous_port: >-
+          {{
+            (
+              host_hardening_sshd_previous_content.content
+              | default('') | b64decode
+              | regex_findall('(?im)^port[ \t]+([0-9]+)[ \t]*$')
+              | first
+            ) | default('')
+          }}
+
+    - name: Install SELinux port management dependencies
+      ansible.builtin.dnf:
+        name:
+          - policycoreutils-python-utils
+          - python3-libselinux
+        state: present
+        update_cache: true
+      when:
+        - host_hardening_sshd_port is not none
+        - host_hardening_sshd_port != 22
+
+    - name: Allow SSH port in SELinux policy
+      community.general.seport:
+        ports: "{{ host_hardening_sshd_port }}"
+        proto: tcp
+        setype: ssh_port_t
+        state: present
+        local: false
+        ignore_selinux_state: true
+      when:
+        - host_hardening_sshd_port is not none
+        - host_hardening_sshd_port != 22
+
+- name: Check if SSH use socket activation on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  block:
+    - name: Check whether SSH uses systemd socket activation
+      ansible.builtin.command:
+        cmd: systemctl is-active --quiet ssh.socket
+      register: host_hardening_sshd_socket_check
+      failed_when: false
+      changed_when: false
+      check_mode: false
+
+    - name: Set SSH socket activation state
+      ansible.builtin.set_fact:
+        host_hardening_sshd_socket_active: "{{ host_hardening_sshd_socket_check.rc == 0 }}"
+
 - name: Update SSH configuration file
   ansible.builtin.template:
     src: openssh-sshd_config.j2
@@ -10,6 +76,7 @@
   notify:
     - Validate SSH daemon configuration
     - Reload SSH service
+    - Withdraw previous role-owned SSH SELinux port
 
 - name: Check for short SSH Diffie-Hellman moduli
   ansible.builtin.shell:

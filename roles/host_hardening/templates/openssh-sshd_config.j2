@@ -3,6 +3,10 @@
 # SSH server security policy.
 # Based in part on:
 # https://infosec.mozilla.org/guidelines/openssh
+{% if host_hardening_sshd_port is not none %}
+
+Port {{ host_hardening_sshd_port }}
+{% endif %}
 {% if host_hardening_sshd_algorithm_policy != 'distribution' %}
 {% set algorithm_prefix =
      '-' if host_hardening_sshd_algorithm_policy == 'remove'
