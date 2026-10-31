@@ -53,7 +53,7 @@
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   block:
-    - name: Check whether SSH uses systemd socket activation
+    - name: Check whether SSH uses systemd socket activation # noqa: command-instead-of-module
       ansible.builtin.command:
         cmd: systemctl is-active --quiet ssh.socket
       register: host_hardening_sshd_socket_check
