@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0
+
+- Add the `standard` package group to the Enterprise Linux package baseline in `system_baseline`.
+- Add `needrestart` with automatic service restarts when automatic updates are enabled on Debian and Ubuntu in `system_baseline`.
+
 ## 0.2.0
 
 - Add optional SSH port management to `host_hardening`.
